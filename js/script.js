@@ -2,7 +2,7 @@
 
 window.addEventListener("DOMContentLoaded", () => {
   //  tabs
-  const tabs = document.querySelectorAll(".tabheader__item"),
+  let tabs = document.querySelectorAll(".tabheader__item"),
     tabsContent = document.querySelectorAll(".tabcontent"),
     tabsParent = document.querySelector(".tabheader__items");
 
@@ -18,7 +18,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function showTabContent(i = 1) {
+  function showTabContent(i = 0) {
     // tabsContent[i].style.display = "block";
     tabsContent[i].classList.add("show", "fade");
     tabsContent[i].classList.remove("hide");
@@ -94,13 +94,13 @@ window.addEventListener("DOMContentLoaded", () => {
   //  модальное окно
   const modalTrigger = document.querySelectorAll("[data-modal]"),
     // const modalTrigger = document.querySelector("[data-modal]"),
-    modal = document.querySelector(".modal"),
-    modalCloseBtn = document.querySelector("[data-close]");
+    modal = document.querySelector(".modal");
+  // modalCloseBtn = document.querySelector("[data-close]");
 
   function openModal() {
-    // modal.classList.add("show");
-    // modal.classList.remove("hide");
-    modal.classList.toggle("show");
+    modal.classList.add("show");
+    modal.classList.remove("hide");
+    // modal.classList.toggle("show");
     document.body.style.overflow = "hidden";
     clearInterval(modalTimerId);
   }
@@ -110,16 +110,16 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   function closeModal() {
-    // modal.classList.add("hide");
-    // modal.classList.remove("show");
-    modal.classList.toggle("show");
+    modal.classList.add("hide");
+    modal.classList.remove("show");
+    // modal.classList.toggle("show");
     document.body.style.overflow = "";
   }
 
-  modalCloseBtn.addEventListener("click", closeModal);
+  // modalCloseBtn.addEventListener("click", closeModal);
 
   modal.addEventListener("click", (e) => {
-    if (e.target === modal) {
+    if (e.target === modal || e.target.getAttribute("data-close") === "") {
       closeModal();
     }
   });
@@ -131,7 +131,8 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   //  открытие модалки по таймеру
-  // const modalTimerId = setTimeout(openModal, 5000);
+  const modalTimerId = setTimeout(openModal, 50000);
+
   function showModalByScroll() {
     if (
       window.pageYOffset + document.documentElement.clientHeight >=
@@ -147,12 +148,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
   //  Урок48: Используем классы для карточек
   class MenuCard {
-    constructor(src, alt, title, descr, price, parentSelector) {
+    constructor(src, alt, title, descr, price, parentSelector, ...classes) {
       this.src = src;
       this.alt = alt;
       this.title = title;
       this.descr = descr;
       this.price = price;
+      this.classes = classes;
       this.parent = document.querySelector(parentSelector);
       this.transfer = 0.5;
       // this.priceRu=price*this.transfer;
@@ -165,8 +167,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
     render() {
       const element = document.createElement("div");
+      if (this.classes.length === 0) {
+        this.element = "menu__item";
+        element.classList.add(this.element);
+      } else {
+        this.classes.forEach((className) => element.classList.add(className));
+      }
       element.innerHTML = `
-        <div class="menu__item">
           <img src=${this.src} alt=${this.alt}>
           <h3 class="menu__item-subtitle">${this.title}</h3>
           <div class="menu__item-descr">${this.descr}</div>
@@ -175,7 +182,6 @@ window.addEventListener("DOMContentLoaded", () => {
               <div class="menu__item-cost">Цена:</div>
               <div class="menu__item-total"><span>${this.priceRu}</span> руб/день</div>
           </div>
-        </div>
       `;
       this.parent.append(element);
     }
@@ -190,6 +196,7 @@ window.addEventListener("DOMContentLoaded", () => {
     "Всегда свежие ягоды и фрукты: яблоки, киви, ананас, грейпфрут, виноград, клубника, вишня",
     10,
     ".menu .container"
+    // "menu__item"
   );
   azaMenu.render();
 
@@ -198,8 +205,10 @@ window.addEventListener("DOMContentLoaded", () => {
     "vegy",
     'Меню "Фитнес"',
     'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-    10,
-    ".menu .container"
+    4,
+    ".menu .container",
+    "menu__item",
+    "big"
   ).render();
 
   new MenuCard(
@@ -207,8 +216,9 @@ window.addEventListener("DOMContentLoaded", () => {
     "elite",
     "Меню “Премиум”",
     "В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!",
-    10,
-    ".menu .container"
+    8,
+    ".menu .container",
+    "menu__item"
   ).render();
 
   new MenuCard(
@@ -216,7 +226,122 @@ window.addEventListener("DOMContentLoaded", () => {
     "post",
     'Меню "Постное"',
     "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.",
-    10,
-    ".menu .container"
+    16,
+    ".menu .container",
+    "menu__item"
   ).render();
+
+  //Forms
+  const forms = document.querySelectorAll("form");
+
+  const message = {
+    // loading: "Загрузка...",
+    loading: "img/form/spinner.svg",
+    success: "Благодарю! До связи!",
+    failure: "Что-то пошло не так...",
+  };
+
+  forms.forEach((item) => {
+    postData(item);
+  });
+
+  function postData(form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      // const statusMessage = document.createElement("div");
+      const statusMessage = document.createElement("img");
+      // statusMessage.classList.add("status");
+      statusMessage.src = message.loading;
+      // statusMessage.textContent = message.loading;
+      statusMessage.style.cssText = `
+        display: block;
+        margin: 0 auto;
+      `;
+
+      // form.append(statusMessage);
+      form.insertAdjacentElement("afterend", statusMessage);
+      const request = new XMLHttpRequest();
+      request.open("POST", "server.php");
+      // //  заголовок указывать не нужно, если используется XMLHttpRequest+form-data
+      // // request.setRequestHeader("Content-type", "multipart/form-data");
+      // const formData = new FormData(form);
+
+      // request.send(formData);
+
+      // request.addEventListener("load", () => {
+      //   if (request.status === 200) {
+      //     console.log(request.response);
+      //     statusMessage.textContent = message.success;
+      //     form.reset();
+      //     setTimeout(() => {
+      //       statusMessage.remove();
+      //     }, 1000);
+      //   } else {
+      //     statusMessage.textContent = message.failure;
+      //   }
+      // });
+      //  Json - формат отправки данных
+      request.setRequestHeader("Content-type", "application/json");
+      const formData = new FormData(form);
+
+      const obj = {};
+      formData.forEach(function (value, key) {
+        obj[key] = value;
+      });
+
+      const json = JSON.stringify(obj);
+
+      request.send(json);
+
+      request.addEventListener("load", () => {
+        if (request.status === 200) {
+          console.log(request.response);
+          // statusMessage.textContent = message.success;
+          showThanksModal(message.success);
+          // statusMessage.remove();
+          form.reset();
+          // setTimeout(() => {
+          statusMessage.remove();
+          // }, 1000);
+        } else {
+          // statusMessage.textContent = message.failure;
+          showThanksModal(message.failure);
+        }
+      });
+    });
+  }
+
+  function showThanksModal(message) {
+    const prevModalDialog = document.querySelector(".modal__dialog");
+    prevModalDialog.classList.add("hide");
+    openModal();
+
+    const thanksModal = document.createElement("div");
+    thanksModal.classList.add("modal__dialog");
+    thanksModal.innerHTML = `
+      <div class="modal__content">
+        <div class="modal__close" data-close>×</div>
+        <div class="modal__title">${message}</div>
+      </div>
+    `;
+
+    document.querySelector(".modal").append(thanksModal);
+    setTimeout(() => {
+      thanksModal.remove();
+      prevModalDialog.classList.add("show");
+      prevModalDialog.classList.remove("hide");
+      closeModal();
+    }, 4000);
+  }
+
+  fetch("https://jsonplaceholder.typicode.com/posts", {
+    method: "POST",
+    body: JSON.stringify({ name: "Alex" }),
+    headers: {
+      "Content-type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((json) => console.log(json));
 });
