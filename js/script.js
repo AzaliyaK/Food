@@ -371,6 +371,9 @@ window.addEventListener("DOMContentLoaded", () => {
   let slideIndex = 1;
   let slidesLength = slides.length;
   let offset = 0;
+  let myWidth = modifyToDigits(width);
+  console.log(`myW=${myWidth}`);
+  console.log(`width=${width}`);
 
   if (slidesLength < 10) {
     total.textContent = `0${slidesLength}`;
@@ -386,7 +389,7 @@ window.addEventListener("DOMContentLoaded", () => {
   slidesWrapper.style.overflow = "hidden";
 
   slides.forEach((slide) => {
-    slide.style.width = width;
+    slide.style.width = myWidth + "px";
   });
 
   slider.style.position = "relative";
@@ -431,27 +434,29 @@ window.addEventListener("DOMContentLoaded", () => {
   dots[slideIndex - 1].style.opacity = "1";
 
   next.addEventListener("click", () => {
-    if (offset == +width.slice(0, width.length - 2) * (slidesLength - 1)) {
-      offset = 0;
-    } else {
-      offset += +width.slice(0, width.length - 2);
-    }
-    slidesField.style.transform = `translateX(-${offset}px)`;
-
+    // if (offset == +width.slice(0, width.length - 2) * (slidesLength - 1)) {
     if (slideIndex == slidesLength) {
       slideIndex = 1;
     } else {
       slideIndex += 1;
     }
+    offset = myWidth * slideIndex;
+    // if (offset == myWidth * (slidesLength - 1)) {
+    //   offset = 0;
+    // } else {
+    //   offset = myWidth*slideIndex;
+    // }
+    slidesField.style.transform = `translateX(-${offset}px)`;
+
     showIndex();
     showDots();
   });
 
   prev.addEventListener("click", () => {
     if (offset == 0) {
-      offset = +width.slice(0, width.length - 2) * (slidesLength - 1);
+      offset = myWidth * (slidesLength - 1);
     } else {
-      offset -= +width.slice(0, width.length - 2);
+      offset -= myWidth;
     }
     slidesField.style.transform = `translateX(-${offset}px)`;
 
@@ -468,7 +473,7 @@ window.addEventListener("DOMContentLoaded", () => {
     dot.addEventListener("click", (e) => {
       const slideTo = e.target.getAttribute("data-slide-to");
       slideIndex = slideTo;
-      offset = +width.slice(0, width.length - 2) * (slideIndex - 1);
+      offset = myWidth * (slideIndex - 1);
       slidesField.style.transform = `translateX(-${offset}px)`;
       showIndex();
       showDots();
@@ -487,6 +492,15 @@ window.addEventListener("DOMContentLoaded", () => {
     dots.forEach((dot) => (dot.style.opacity = ".5"));
     dots[slideIndex - 1].style.opacity = "1";
   }
+
+  function deleteNotDigits(str) {
+    return (+str.replace(/D/g, "") / 100).toFixed();
+  }
+
+  function modifyToDigits(str) {
+    return (+width.slice(0, width.length - 2)).toFixed();
+  }
+
   //  простой вариант
   // if (slidesLength < 10) {
   //   total.textContent = `0${slidesLength}`;
