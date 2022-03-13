@@ -1,3 +1,4 @@
+import { getResource } from "../services/services";
 function cards() {
   //  Используем классы для карточек
   class MenuCard {
@@ -42,14 +43,6 @@ function cards() {
   const descrAzaMenu =
     "Во многих фруктах можно найти практически всю таблицу Менделеева и все необходимые организму человека витамины. Во фруктах содержатся: бета-каротин, холин, витамины А, группы В (В1, В2, В5, В6, В9, В12), С, Е, К, Н и РР, а также калий, кальций, магний, цинк, селен, медь и марганец, железо, хлор и сера, йод, хром, фтор, молибден, бор и ванадий, олово и титан, кремний, кобальт, никель и алюминий, фосфор и натрий. По содержанию клетчатки фрукты не уступают злакам и овощам, а иногда и опережают их. Фрукты играют немаловажную роль в нормальном пищеварении и метаболизме, незаменимы в диетическом питании.";
 
-  const getResource = async (url) => {
-    let res = await fetch(url);
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url},status:${res.status}`);
-    }
-    return await res.json();
-  };
-
   getResource("http://localhost:3000/menu").then((data) => createCard(data));
 
   function createCard(data) {
@@ -73,4 +66,5 @@ function cards() {
   }
 }
 
-module.exports = cards;
+// module.exports = cards;
+export default cards;
